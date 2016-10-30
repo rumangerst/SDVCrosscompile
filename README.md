@@ -34,10 +34,11 @@ If you extracted SDVCrosscompile into the same folder as your solution, just ope
 4. Name it as you wish
 5. Select `xcompile.sh` (Linux/Mac) or `xcompile.bat` as command
 6. Set the working directory to the solution dir (`${SolutionDir}`)
+7. You can find the command in the "Project" menu
 
-![Screenshot]()
+![Screenshot](https://rumangerst.github.io/SDVCrosscompile/docs/monodevelop-setup.png)
 
-###
+### Visual Studio
 
 ### Command line parameters
 
