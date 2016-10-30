@@ -10,12 +10,12 @@ You can find a download [here](https://github.com/rumangerst/StardewValleyMisc/r
 
 ## Configuration
 
-SDVCrosscompile doesn't need any configuration to work. But you can 
+SDVCrosscompile doesn't need any configuration to work. But you can
 change settings like build parameters in `xcompile.py`.
 
 ## Usage
 
-There are two ways to use SDVCrosscompile: 
+There are two ways to use SDVCrosscompile:
 
 1. Extract it into the same folder as the \*.sln file
 2. Extract it somewhere else and let it run in your project directory
@@ -27,6 +27,17 @@ If you extracted SDVCrosscompile into the same folder as your solution, just ope
 ### Integrate into your IDE
 
 #### MonoDevelop
+
+1. Open the project settings
+2. Go to Build -> Custom Commands
+3. Set the type of the custom command to "Custom Command"
+4. Name it as you wish
+5. Select `xcompile.sh` (Linux/Mac) or `xcompile.bat` as command
+6. Set the working directory to the solution dir (`${SolutionDir}`)
+
+![Screenshot]()
+
+###
 
 ### Command line parameters
 
@@ -97,5 +108,3 @@ If you download the binary distribution of this tool, the libraries will be incl
     ├── Stardew Valley.exe
     └── xTile.dll
 ```
-
-
