@@ -6,7 +6,7 @@ a mod in the SilVerPLuM package format.
 
 ## Download
 
-You can find a download [here](https://github.com/rumangerst/StardewValleyMisc/releases). Also you can just clone the whole repository.
+You can find a download [here](https://github.com/rumangerst/SDVCrosscompile/releases). Also you can just clone the whole repository.
 
 ## Configuration
 
