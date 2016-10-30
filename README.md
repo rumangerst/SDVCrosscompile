@@ -40,6 +40,15 @@ If you extracted SDVCrosscompile into the same folder as your solution, just ope
 
 ### Visual Studio
 
+1. Open Tools -> External Tools
+2. Add a new tool
+3. Set the title as you want
+4. Select `xcompile.bat` as command
+5. Set initial directory to the solution dir (`${SolutionDir}`)
+6. If you don't want a separate CMD window, check "Use Output Window"
+
+![Screenshot](https://rumangerst.github.io/SDVCrosscompile/docs/vs-setup.png)
+
 ### Command line parameters
 
 You can customize the behavior of SDVCrosscompile with command line parameters:
