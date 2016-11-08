@@ -1,8 +1,6 @@
 # SDVCrosscompile
 
 This pipeline will cross-compile a mod for Windows, Mac and Linux.
-If you want, it will also build
-a mod in the SilVerPLuM package format.
 
 ## Download
 
@@ -58,8 +56,6 @@ Usage: `./xcompile[.bat|.sh|.py] [--no-silverplum] [--auto-silverplum] [--no-gra
 |Argument|Explanation|
 |--------|-----------|
 |`--sln` | Defines the solutions to be built. If not `--sln` is present, SDVCrosscompile will build all \*.sln files. |
-|`--no-silverplum` | Skips all SilVerPLuM build steps |
-|`--auto-silverplum` | If no SilVerPLuM config is present, guess the needed configuration automatically. |
 |`--no-graphics` | Asks for input with CLI instead of dialogs |
 |`--no-zip` | Disables automatic packing into archives. |
 |`--keep-dependencies` | Keeps the depencies from the `lib-*` folders in the output directories.|
