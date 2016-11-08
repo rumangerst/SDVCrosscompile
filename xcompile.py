@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #######################################################
-# SDVCrosscompile version 1.1.0.1
+# SDVCrosscompile version 1.1.0.2
 #######################################################
 
 import os
@@ -40,12 +40,12 @@ PLATFORMS = {
 TITLE_UNDERLINE_CHARS = 50
 TKINTER_ROOT_WINDOW = None
 CLI_PARSED_ARGUMENTS = None
-PROGRAM_NAME = "SDVCrosscompile version 1.1.0.1"
+PROGRAM_NAME = "SDVCrosscompile version 1.1.0.2"
 SKIP_ALL_ASKING = False
 
 def parse_cli():
 	
-	modes = [ "--no-silverplum", "--auto-silverplum", "--no-graphics", "--no-zip", "--keep-dependencies", "--output", "--sln", "--xbuild-executable", "--override-calling-platform"] 
+	modes = [ "--no-graphics", "--no-zip", "--keep-dependencies", "--output", "--sln", "--xbuild-executable", "--override-calling-platform"] 
 	modes += [ "--lib-%s" % x for x in PLATFORMS.keys() ]
 	modes += [ "--build-args-%s" % x for x in PLATFORMS.keys() ]
 	modes += [ "--build-targetdir-%s" % x for x in PLATFORMS.keys() ]
@@ -205,132 +205,6 @@ def find_solutions():
 		
 	return [ os.path.abspath(x) for x in cli_list(CLI_PARSED_ARGUMENTS, "--sln", [ os.path.abspath(x) for x in glob.glob("*.sln")])]
 	
-def create_silverplum_mod_json(projectname, projectpath):
-
-	if not cli_flag(CLI_PARSED_ARGUMENTS, "--auto-silverplum"):
-		if not ask_question("No SilVerPLuM config found. Do you want to create it now?"):
-			return True
-			
-	global SKIP_ALL_ASKING
-	SKIP_ALL_ASKING = cli_flag(CLI_PARSED_ARGUMENTS, "--auto-silverplum")
-
-	name = ask_input("Modification name", projectname)
-	if not name:
-		return False
-		
-	description = ask_input("Description", "")
-	
-	categories = [x for x in ask_list("Categories") if x]
-
-	id = create_silverplum_id(name)
-
-	author = ask_input("Author", getpass.getuser())
-	if not author:
-		return False
-		
-	license = ask_input("License", "MIT")
-	if not license:
-		return False
-		
-	url = ask_input("Website", "https://stardewvalley.net/")
-	if not url:
-		return False
-		
-	version = ask_input("Version", "1.0")
-	if not version:
-		return False
-		
-	requirements = [create_silverplum_version(x) for x in ask_list("Required mods", [ "stardewvalley", "smapi" ]) if create_silverplum_version(x)]
-	
-	SKIP_ALL_ASKING = False
-	
-	json_string = json.dumps({
-	
-		"id" : id,
-		"name" : name,
-		"author" : author,
-		"license" : license,
-		"url" : url,
-		"version" : version,
-		"requires" : requirements,
-		"categories" : categories,
-		"content" : {
-		
-			"windows" : {
-				"name" : "Windows build",
-				"description" : "Contains the mod built for Windows",
-				"default" : True,
-				"platforms" : ["windows"],
-				"pipeline" : "file",
-				"installables" : { "" : "stardewvalley://Mods/" + projectname }
-				},
-			"linux" : {
-				"name" : "Linux build",
-				"description" : "Contains the mod built for Linux",
-				"default" : True,
-				"platforms" : ["linux"],
-				"pipeline" : "file",
-				"installables" : { "" : "stardewvalley://Mods/" + projectname }
-				},
-			"mac" : {
-				"name" : "Windows build",
-				"description" : "Contains the mod built for Mac",
-				"default" : True,
-				"platforms" : ["mac"],
-				"pipeline" : "file",
-				"installables" : { "" : "stardewvalley://Mods/" + projectname }
-				}
-		
-		}
-	
-	}, sort_keys=False, indent=4, separators=(',', ' : '))
-	
-	
-	
-	f = open(projectpath + "/mod.json", "w")
-	f.write(json_string)
-	f.close()
-	
-	if not os.path.isfile(projectpath + "/mod-description.md"):
-		f = open(projectpath + "/mod-description.md", "w")
-		f.write("## " + name + "\n")
-		f.write(description)
-		f.close()
-
-	return True
-
-def build_silverplum(projectname, projectpath, destinationdir):
-
-	print_title("SilVerPLuM packaging", ".")
-
-	if not os.path.isfile(projectpath + "/mod.json"):
-		if not create_silverplum_mod_json(projectname, projectpath):
-			return False
-	
-	print("SilVerPLuM package for " + projectname)
-	
-	projectdestinationdir = destinationdir + "/" + projectname + "_Silverplum"
-	create_path_if_not_exists(projectdestinationdir)
-	
-	shutil.copy(projectpath + "/mod.json", projectdestinationdir + "/mod.json")
-	
-	if os.path.isfile(projectpath + "/mod-description.md"):
-		shutil.copy(projectpath + "/mod-description.md", projectdestinationdir + "/mod-description.md")
-		
-	for platform in PLATFORMS:
-		
-		platform_src_dir = destinationdir + "/" + projectname + "_" + platform.capitalize() + "/" + projectname
-		platform_dst_dir = projectdestinationdir + "/" + platform
-		
-		shutil.copytree(platform_src_dir, platform_dst_dir)
-		
-		
-	# Zip it
-	if not cli_flag(CLI_PARSED_ARGUMENTS, "--no-zip"):
-		shutil.make_archive(projectdestinationdir, "zip", projectdestinationdir)
-
-	return True
-
 def copy_compiled_binaries(platform, projectname, projectdir, destinationdir):
 	
 	print("Copying binaries to result directory")
@@ -395,26 +269,6 @@ def build_for(platform, solutionfile, projects):
 
 	return process.returncode == 0
 
-def create_silverplum_id(string):
-
-	return re.sub("[^a-z0-9_.\\-]+", "-", string.lower())
-	
-def create_silverplum_version(string):
-	
-	string = string.strip().lower()
-	
-	if not string:
-		return ""
-	
-	cell = [x for x in re.split("(<|>|=)", string) if x]
-	
-	if len(cell) == 2:
-		return string
-	elif len(cell) == 1:
-		return string + ">0"
-	else:
-		return ""
-
 def get_projects(solutionfile):
 
 	result = { }
@@ -470,12 +324,7 @@ def build_solution(solutionfile):
 		if success:			
 			for projectname in projects:				
 				success &= copy_compiled_binaries(platform, projectname, projects[projectname], destinationdir)
-				
-	for projectdir in projects.values():
-		
-		if success and not cli_flag(CLI_PARSED_ARGUMENTS, "--no-silverplum"):
-			success &= build_silverplum(projectname, projects[projectname], destinationdir)
-	
+					
 	return success
 	
 
